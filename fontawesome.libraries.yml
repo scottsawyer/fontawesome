@@ -35,9 +35,3 @@ fontawesome.webfonts.shim:
       /libraries/fontawesome/css/v4-shims.css: { minified: true }
   dependencies:
     - fontawesome/fontawesome.webfonts
-
-fontawesome.svg.pseudoElements:
-  version: *fontawesome_version
-  license: *fontawesome_svg_license
-  js:
-    js/enablePseudoElements.js: { }
