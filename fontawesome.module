@@ -364,7 +364,7 @@ function fontawesome_extract_icons() {
     \Drupal::cache('data')->set('fontawesome.iconlist', $icons, strtotime('+1 week'), ['fontawesome', 'iconlist']);
   }
 
-  return $icons;
+  return (array) $icons;
 }
 
 /**
