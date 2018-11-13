@@ -181,11 +181,14 @@ class SettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
 
+    // Load the fontawesome libraries so we can use its definitions here.
+    $fontawesome_library = $this->libraryDiscovery->getLibraryByName('fontawesome', 'fontawesome.svg');
+
     // Clear the library cache so we use the updated information.
     $this->libraryDiscovery->clearCachedDefinitions();
 
     // Set external file defaults.
-    $default_location = 'https://use.fontawesome.com/releases/v5.5.0/';
+    $default_location = 'https://use.fontawesome.com/releases/v' . $fontawesome_library['version'] . '/';
     $default_svg_location = $default_location . 'js/all.js';
     $default_webfonts_location = $default_location . 'css/all.css';
     $default_svg_shimfile_location = $default_location . 'js/v4-shims.js';
