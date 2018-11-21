@@ -128,6 +128,37 @@ class SettingsForm extends ConfigFormBase {
       ],
     ];
 
+    $form['partial'] = [
+      '#type' => 'details',
+      '#open' => FALSE,
+      '#title' => $this->t('Partial file configuration'),
+      '#description' => $this->t('By default, Font Awesome loads all of the icons. However, you can choose to load only some of the icon files if you only want a subset of the available icons. This method can result in reduced file size. These files will be assumed to exist in the same directory as the parent <i>all.js/all.css</i> file.'),
+      'use_solid_file' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Load solid icons'),
+        '#description' => $this->t('Checking this box will cause the Font Awesome library to load the file containing the solid icon declarations (<i>solid.js/solid.css</i>)'),
+        '#default_value' => is_null($fontawesome_config->get('use_solid_file')) === TRUE ? TRUE : $fontawesome_config->get('use_solid_file'),
+      ],
+      'use_regular_file' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Load regular icons'),
+        '#description' => $this->t('Checking this box will cause the Font Awesome library to load the file containing the regular icon declarations (<i>regular.js/regular.css</i>)'),
+        '#default_value' => is_null($fontawesome_config->get('use_regular_file')) === TRUE ? TRUE : $fontawesome_config->get('use_regular_file'),
+      ],
+      'use_light_file' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Load light icons'),
+        '#description' => $this->t('Checking this box will cause the Font Awesome library to load the file containing the light icon declarations (<i>light.js/light.css</i>). Note that this a Pro-only feature.'),
+        '#default_value' => is_null($fontawesome_config->get('use_light_file')) === TRUE ? TRUE : $fontawesome_config->get('use_light_file'),
+      ],
+      'use_brands_file' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Load brand icons'),
+        '#description' => $this->t('Checking this box will cause the Font Awesome library to load the file containing the brands icon declarations (<i>brands.js/brands.css</i>)'),
+        '#default_value' => is_null($fontawesome_config->get('use_brands_file')) === TRUE ? TRUE : $fontawesome_config->get('use_brands_file'),
+      ],
+    ];
+
     $form['shim'] = [
       '#type' => 'details',
       '#open' => TRUE,
@@ -215,6 +246,10 @@ class SettingsForm extends ConfigFormBase {
       ->set('use_shim', $values['use_shim'])
       ->set('external_shim_location', (string) $values['external_shim_location'])
       ->set('allow_pseudo_elements', $values['allow_pseudo_elements'])
+      ->set('use_solid_file', $values['use_solid_file'])
+      ->set('use_regular_file', $values['use_regular_file'])
+      ->set('use_light_file', $values['use_light_file'])
+      ->set('use_brands_file', $values['use_brands_file'])
       ->save();
 
     parent::submitForm($form, $form_state);

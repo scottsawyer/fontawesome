@@ -37,39 +37,36 @@ function fontawesome_library_info_alter(&$libraries, $extension) {
     // Have to modify the library if the user is using a CDN.
     if ($configuration_settings->get('use_cdn')) {
 
-      // Handle SVG method.
-      if (isset($libraries['fontawesome.svg'])) {
-        // Modify the library.
-        $librarySettings = array_shift($libraries['fontawesome.svg']['js']);
-        $libraries['fontawesome.svg']['js'] = [
-          $configuration_settings->get('external_svg_location') => $librarySettings,
-        ];
+      // First check if we're using everything.
+      if (isset($libraries['fontawesome.' . $configuration_settings->get('method')])) {
+        _fontawesome_modify_library($libraries, NULL, $configuration_settings->get('method'), $configuration_settings->get('external_svg_location'));
       }
-      // Handle webfonts method.
-      if (isset($libraries['fontawesome.webfonts'])) {
-        // Modify the library.
-        $librarySettings = array_shift($libraries['fontawesome.webfonts']['css']['theme']);
-        $libraries['fontawesome.webfonts']['css']['theme'] = [
-          $configuration_settings->get('external_svg_location') => $librarySettings,
-        ];
+
+      // Determine the base for the CDN.
+      $cdnComponents = parse_url($configuration_settings->get('external_svg_location'));
+      $cdnComponents['path'] = explode('/', $cdnComponents['path']);
+      unset($cdnComponents['path'][count($cdnComponents['path']) - 1]);
+      $cdnComponents['path'] = implode('/', $cdnComponents['path']) . '/';
+
+      if (isset($libraries['fontawesome.' . $configuration_settings->get('method') . '.base'])) {
+        // Modify settings for the base file.
+        $cdnBase = $cdnComponents;
+        $cdnBase['path'] .= 'fontawesome.' . ($configuration_settings->get('method') == 'webfonts' ? 'css' : 'js');
+        _fontawesome_modify_library($libraries, 'base', $configuration_settings->get('method'), _fontawesome_unparse_url($cdnBase));
+      }
+
+      // Modify settings for individual included files.
+      foreach (['solid', 'regular', 'light', 'brands'] as $libraryType) {
+        if (isset($libraries['fontawesome.' . $configuration_settings->get('method') . '.' . $libraryType])) {
+          $cdnBase = $cdnComponents;
+          $cdnBase['path'] .= $libraryType . '.' . ($configuration_settings->get('method') == 'webfonts' ? 'css' : 'js');
+          _fontawesome_modify_library($libraries, $libraryType, $configuration_settings->get('method'), _fontawesome_unparse_url($cdnBase));
+        }
       }
 
       // Modify the shim as well.
-      if ($configuration_settings->get('use_shim')) {
-        // Handle SVG method.
-        if (isset($libraries['fontawesome.svg'])) {
-          $librarySettings = array_shift($libraries['fontawesome.svg.shim']['js']);
-          $libraries['fontawesome.svg.shim']['js'] = [
-            $configuration_settings->get('external_shim_location') => $librarySettings,
-          ];
-        }
-        // Handle webfonts method.
-        if (isset($libraries['fontawesome.webfonts'])) {
-          $librarySettings = array_shift($libraries['fontawesome.webfonts.shim']['css']['theme']);
-          $libraries['fontawesome.webfonts.shim']['css']['theme'] = [
-            $configuration_settings->get('external_shim_location') => $librarySettings,
-          ];
-        }
+      if (isset($libraries['fontawesome.' . $configuration_settings->get('method') . '.shim'])) {
+        _fontawesome_modify_library($libraries, 'shim', $configuration_settings->get('method'), $configuration_settings->get('external_shim_location'));
       }
     }
 
@@ -85,6 +82,67 @@ function fontawesome_library_info_alter(&$libraries, $extension) {
       $libraries['fontawesome.svg']['js'][$librarySource] = $librarySettings;
     }
   }
+}
+
+/**
+ * Modifies library inclusions to use CDN files when necessary.
+ *
+ * @param array $libraries
+ *   The libraries inclusion array.
+ * @param string $librarySuffix
+ *   The suffix of the library being modified.
+ * @param string $type
+ *   The type of library we are modifying.
+ * @param string $cdnLocation
+ *   The location of the CDN file being used.
+ */
+function _fontawesome_modify_library(array &$libraries, $librarySuffix, $type, $cdnLocation) {
+  // Determine the name of the library.
+  $libraryName = 'fontawesome.' . $type;
+  if (!empty($librarySuffix)) {
+    $libraryName .= '.' . $librarySuffix;
+  }
+
+  // Handle SVG method.
+  if ($type == 'svg') {
+    $librarySettings = array_shift($libraries[$libraryName]['js']);
+    $libraries[$libraryName]['js'] = [
+      $cdnLocation => $librarySettings,
+    ];
+  }
+  // Handle WebFonts method.
+  elseif ($type == 'webfonts') {
+    $librarySettings = array_shift($libraries[$libraryName]['css']['theme']);
+    $libraries[$libraryName]['css']['theme'] = [
+      $cdnLocation => $librarySettings,
+    ];
+  }
+}
+
+/**
+ * Unparses a CDN URL for use with individual Font Awesome file inclusions.
+ *
+ * @param array $parsed
+ *   Array containing URL parsed data.
+ *
+ * @return string
+ *   The unparsed URL for the CDN.
+ */
+function _fontawesome_unparse_url(array $parsed) {
+  $get = function ($key) use ($parsed) {
+    return isset($parsed[$key]) ? $parsed[$key] : NULL;
+  };
+
+  $pass = $get('pass');
+  $user = $get('user');
+  $userinfo = $pass !== NULL ? "$user:$pass" : $user;
+  $port = $get('port');
+  $scheme = $get('scheme');
+  $query = $get('query');
+  $fragment = $get('fragment');
+  $authority = ($userinfo !== NULL ? "$userinfo@" : '') . $get('host') . ($port ? ":$port" : '');
+
+  return (strlen($scheme) ? "$scheme:" : '') . (strlen($authority) ? "//$authority" : '') . $get('path') . (strlen($query) ? "?$query" : '') . (strlen($fragment) ? "#$fragment" : '');
 }
 
 /**
@@ -151,24 +209,30 @@ function fontawesome_page_attachments(array &$page) {
     return;
   }
 
-  // Attach the main library.
-  if ($configuration_settings->get('method') == 'webfonts') {
-    // Webfonts method.
-    $page['#attached']['library'][] = 'fontawesome/fontawesome.webfonts';
-
-    // Attach the shim file if needed.
-    if ($configuration_settings->get('use_shim')) {
-      $page['#attached']['library'][] = 'fontawesome/fontawesome.webfonts.shim';
+  // First check if we're using everything.
+  if (is_null($configuration_settings->get('use_solid_file')) === TRUE || ($configuration_settings->get('use_solid_file') && $configuration_settings->get('use_regular_file') && $configuration_settings->get('use_light_file') && $configuration_settings->get('use_brands_file'))) {
+    // Attach the main library.
+    $page['#attached']['library'][] = 'fontawesome/fontawesome.' . $configuration_settings->get('method');
+  }
+  // Else we attach the libraries piecemeal.
+  else {
+    if ($configuration_settings->get('use_solid_file')) {
+      $page['#attached']['library'][] = 'fontawesome/fontawesome.' . $configuration_settings->get('method') . '.solid';
+    }
+    if ($configuration_settings->get('use_regular_file')) {
+      $page['#attached']['library'][] = 'fontawesome/fontawesome.' . $configuration_settings->get('method') . '.regular';
+    }
+    if ($configuration_settings->get('use_light_file')) {
+      $page['#attached']['library'][] = 'fontawesome/fontawesome.' . $configuration_settings->get('method') . '.light';
+    }
+    if ($configuration_settings->get('use_brands_file')) {
+      $page['#attached']['library'][] = 'fontawesome/fontawesome.' . $configuration_settings->get('method') . '.brands';
     }
   }
-  else {
-    // SVG method.
-    $page['#attached']['library'][] = 'fontawesome/fontawesome.svg';
 
-    // Attach the shim file if needed.
-    if ($configuration_settings->get('use_shim')) {
-      $page['#attached']['library'][] = 'fontawesome/fontawesome.svg.shim';
-    }
+  // Attach the shim file if needed.
+  if ($configuration_settings->get('use_shim')) {
+    $page['#attached']['library'][] = 'fontawesome/fontawesome.' . $configuration_settings->get('method') . '.shim';
   }
 }
 
