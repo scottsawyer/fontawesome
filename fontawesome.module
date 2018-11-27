@@ -71,15 +71,19 @@ function fontawesome_library_info_alter(&$libraries, $extension) {
     }
 
     // Allow pseudo-elements in JS if selected.
-    if ($configuration_settings->get('allow_pseudo_elements')) {
-      // Modify the library.
-      $librarySettings = reset($libraries['fontawesome.svg']['js']);
-      $librarySource = key($libraries['fontawesome.svg']['js']);
-      // Font Awesome requires this script tag to enable pseudo elements.
-      $librarySettings['attributes'] = [
-        'data-search-pseudo-elements' => TRUE,
-      ];
-      $libraries['fontawesome.svg']['js'][$librarySource] = $librarySettings;
+    if ($configuration_settings->get('allow_pseudo_elements') && $configuration_settings->get('method') == 'svg') {
+      // Modify the libraries to add pseudo elements tag.
+      foreach ($libraries as $key => &$values) {
+        if (substr($key, 0, 15) == 'fontawesome.svg') {
+          $librarySettings = reset($values['js']);
+          $librarySource = key($values['js']);
+          // Font Awesome requires this script tag to enable pseudo elements.
+          $librarySettings['attributes'] = [
+            'data-search-pseudo-elements' => TRUE,
+          ];
+          $values['js'][$librarySource] = $librarySettings;
+        }
+      }
     }
   }
 }
