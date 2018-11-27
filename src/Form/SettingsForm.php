@@ -84,7 +84,7 @@ class SettingsForm extends ConfigFormBase {
       ],
       '#default_value' => $fontawesome_config->get('method'),
       '#description' => $this->t('This setting controls the way Font Awesome works. SVG with JS is the modern, easy, and powerful version with the most backwards compatibility. Web Fonts with CSS is the classic Font Awesome icon method that you have seen in earlier versions of Font Awesome. We recommend SVG with JS. Please note that the Webfonts with CSS version does not allow backwards compatibility with Font Awesome 4. That means you will need to check your code base to be certain that the icons are all updated to work with version 5. See @gettingStartedLink for more information.', [
-        '@gettingStartedLink' => Link::fromTextAndUrl($this->t('the Font Awesome guide'), Url::fromUri('https://fontawesome.com/get-started'))->toString(),
+        '@gettingStartedLink' => Link::fromTextAndUrl($this->t('the Font Awesome guide'), Url::fromUri('https://fontawesome.com/start'))->toString(),
       ]),
     ];
 
@@ -92,7 +92,7 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Allow CSS pseudo-elements?'),
       '#description' => $this->t('If you do not want to add icons directly in code, you can add them through CSS pseudo-elements. Font Awesome has leveraged the ::before pseudo-element to add icons to a page since the very beginning. For more information on how to use pseudo-elements, see the @pseudoElementsLink. Note that this feature is always available with the Webfonts version of Font Awesome. If you turn this feature on for SVG with JS, it will slow your site down noticeably.', [
-        '@pseudoElementsLink' => Link::fromTextAndUrl($this->t('Font Awesome guide to pseudo-elements'), Url::fromUri('https://fontawesome.com/how-to-use/web-fonts-with-css#pseudo-elements'))->toString(),
+        '@pseudoElementsLink' => Link::fromTextAndUrl($this->t('Font Awesome guide to pseudo-elements'), Url::fromUri('https://fontawesome.com/how-to-use/on-the-web/advanced/css-pseudo-elements'))->toString(),
       ]),
       '#default_value' => $fontawesome_config->get('allow_pseudo_elements'),
     ];
@@ -164,7 +164,7 @@ class SettingsForm extends ConfigFormBase {
       '#open' => TRUE,
       '#title' => $this->t('Version 4 Backwards Compatibility'),
       '#description' => $this->t('Version 5 of Font Awesome has some changes which require modifications to the way you declare many of your icons. The settings below are designed to ease that transition. See @upgradingLink for more information.', [
-        '@upgradingLink' => Link::fromTextAndUrl($this->t('the Font Awesome guide to upgrading version 4 to version 5'), Url::fromUri('https://fontawesome.com/how-to-use/upgrading-from-4'))->toString(),
+        '@upgradingLink' => Link::fromTextAndUrl($this->t('the Font Awesome guide to upgrading version 4 to version 5'), Url::fromUri('https://fontawesome.com/how-to-use/on-the-web/setup/upgrading-from-version-4'))->toString(),
       ]),
       'use_shim' => [
         '#type' => 'checkbox',
