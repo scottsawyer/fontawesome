@@ -88,7 +88,7 @@ class FontAwesomeIconMedia extends MediaSourceBase {
         break;
     }
 
-    return '/libraries/fontawesome/svgs/' . $srcFolder . '/' . $icon
+    return 'libraries/fontawesome/svgs/' . $srcFolder . '/' . $icon
       ->get('icon_name')
       ->getValue() . '.svg';
   }
