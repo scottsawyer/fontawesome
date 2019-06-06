@@ -89,6 +89,7 @@ class FontAwesomeIconWidget extends WidgetBase implements ContainerFactoryPlugin
       '#open' => FALSE,
       '#title' => $this->t('Additional Font Awesome Settings'),
     ];
+
     // Allow user to determine style.
     $element['settings']['style'] = [
       '#type' => 'select',
@@ -103,6 +104,17 @@ class FontAwesomeIconWidget extends WidgetBase implements ContainerFactoryPlugin
       ],
       '#default_value' => $items[$delta]->get('style')->getValue(),
     ];
+    // Remove style options if they aren't being loaded.
+    if (!$configuration_settings->get('use_solid_file')) {
+      unset($element['settings']['style']['#options']['fas']);
+    }
+    if (!$configuration_settings->get('use_regular_file')) {
+      unset($element['settings']['style']['#options']['far']);
+    }
+    if (!$configuration_settings->get('use_light_file')) {
+      unset($element['settings']['style']['#options']['fal']);
+    }
+
     // Allow user to determine size.
     $element['settings']['size'] = [
       '#type' => 'select',
