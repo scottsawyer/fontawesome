@@ -6,13 +6,13 @@ fontawesome.svg:
     gpl-compatible: true
   version: &fontawesome_version "5.8.2"
   js:
-    /libraries/fontawesome/js/all.js: { minified: true }
+    /libraries/fontawesome/js/all.js: { minified: true, attributes: { defer: true } }
 
 fontawesome.svg.shim:
   version: *fontawesome_version
   license: *fontawesome_svg_license
   js:
-    /libraries/fontawesome/js/v4-shims.js: { minified: true }
+    /libraries/fontawesome/js/v4-shims.js: { minified: true, attributes: { defer: true } }
   dependencies:
     - fontawesome/fontawesome.svg
 
@@ -20,13 +20,13 @@ fontawesome.svg.base:
   version: *fontawesome_version
   license: *fontawesome_svg_license
   js:
-    /libraries/fontawesome/js/fontawesome.js: { minified: true }
+    /libraries/fontawesome/js/fontawesome.js: { minified: true, attributes: { defer: true } }
 
 fontawesome.svg.solid:
   version: *fontawesome_version
   license: *fontawesome_svg_license
   js:
-    /libraries/fontawesome/js/solid.js: { minified: true }
+    /libraries/fontawesome/js/solid.js: { minified: true, attributes: { defer: true } }
   dependencies:
     - fontawesome/fontawesome.svg.base
 
@@ -34,7 +34,7 @@ fontawesome.svg.regular:
   version: *fontawesome_version
   license: *fontawesome_svg_license
   js:
-    /libraries/fontawesome/js/regular.js: { minified: true }
+    /libraries/fontawesome/js/regular.js: { minified: true, attributes: { defer: true } }
   dependencies:
     - fontawesome/fontawesome.svg.base
 
@@ -42,7 +42,7 @@ fontawesome.svg.light:
   version: *fontawesome_version
   license: *fontawesome_svg_license
   js:
-    /libraries/fontawesome/js/light.js: { minified: true }
+    /libraries/fontawesome/js/light.js: { minified: true, attributes: { defer: true } }
   dependencies:
     - fontawesome/fontawesome.svg.base
 
@@ -50,7 +50,7 @@ fontawesome.svg.brands:
   version: *fontawesome_version
   license: *fontawesome_svg_license
   js:
-    /libraries/fontawesome/js/brands.js: { minified: true }
+    /libraries/fontawesome/js/brands.js: { minified: true, attributes: { defer: true } }
   dependencies:
     - fontawesome/fontawesome.svg.base
 
