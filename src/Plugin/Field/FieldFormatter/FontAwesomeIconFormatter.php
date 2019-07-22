@@ -123,6 +123,11 @@ class FontAwesomeIconFormatter extends FormatterBase implements ContainerFactory
     if ($configurationSettings->get('method') == 'webfonts') {
       // Webfonts method.
       $fontawesomeLibraries[] = 'fontawesome/fontawesome.webfonts';
+
+      // Attach the shim file if needed.
+      if ($configurationSettings->get('use_shim')) {
+        $fontawesomeLibraries[] = 'fontawesome/fontawesome.webfonts.shim';
+      }
     }
     else {
       // SVG method.
