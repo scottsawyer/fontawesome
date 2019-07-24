@@ -5,12 +5,14 @@ fontawesome.svg:
     url: https://fontawesome.com/license
     gpl-compatible: true
   version: &fontawesome_version "5.9.0"
+  header: true
   js:
     /libraries/fontawesome/js/all.js: { minified: true, attributes: { defer: true } }
 
 fontawesome.svg.shim:
   version: *fontawesome_version
   license: *fontawesome_svg_license
+  header: true
   js:
     /libraries/fontawesome/js/v4-shims.js: { minified: true, attributes: { defer: true } }
   dependencies:
@@ -19,12 +21,14 @@ fontawesome.svg.shim:
 fontawesome.svg.base:
   version: *fontawesome_version
   license: *fontawesome_svg_license
+  header: true
   js:
     /libraries/fontawesome/js/fontawesome.js: { minified: true, attributes: { defer: true } }
 
 fontawesome.svg.solid:
   version: *fontawesome_version
   license: *fontawesome_svg_license
+  header: true
   js:
     /libraries/fontawesome/js/solid.js: { minified: true, attributes: { defer: true } }
   dependencies:
@@ -33,6 +37,7 @@ fontawesome.svg.solid:
 fontawesome.svg.regular:
   version: *fontawesome_version
   license: *fontawesome_svg_license
+  header: true
   js:
     /libraries/fontawesome/js/regular.js: { minified: true, attributes: { defer: true } }
   dependencies:
@@ -41,6 +46,7 @@ fontawesome.svg.regular:
 fontawesome.svg.light:
   version: *fontawesome_version
   license: *fontawesome_svg_license
+  header: true
   js:
     /libraries/fontawesome/js/light.js: { minified: true, attributes: { defer: true } }
   dependencies:
@@ -49,6 +55,7 @@ fontawesome.svg.light:
 fontawesome.svg.brands:
   version: *fontawesome_version
   license: *fontawesome_svg_license
+  header: true
   js:
     /libraries/fontawesome/js/brands.js: { minified: true, attributes: { defer: true } }
   dependencies:
