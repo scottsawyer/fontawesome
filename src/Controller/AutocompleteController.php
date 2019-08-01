@@ -50,6 +50,10 @@ class AutocompleteController extends ControllerBase {
                 $iconPrefix = 'far';
                 break;
 
+              case 'duotone':
+                $iconPrefix = 'fad';
+                break;
+
               default:
               case 'solid':
                 $iconPrefix = 'fas';
