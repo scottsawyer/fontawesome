@@ -110,6 +110,7 @@ function _fontawesome_modify_library(array &$libraries, $librarySuffix, $type, $
   // Handle SVG method.
   if ($type == 'svg') {
     $librarySettings = array_shift($libraries[$libraryName]['js']);
+    $librarySettings['type'] = 'external';
     $libraries[$libraryName]['js'] = [
       $cdnLocation => $librarySettings,
     ];
@@ -117,6 +118,7 @@ function _fontawesome_modify_library(array &$libraries, $librarySuffix, $type, $
   // Handle WebFonts method.
   elseif ($type == 'webfonts') {
     $librarySettings = array_shift($libraries[$libraryName]['css']['theme']);
+    $librarySettings['type'] = 'external';
     $libraries[$libraryName]['css']['theme'] = [
       $cdnLocation => $librarySettings,
     ];
