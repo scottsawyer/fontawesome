@@ -106,13 +106,13 @@ class FontAwesomeIconWidget extends WidgetBase implements ContainerFactoryPlugin
       '#default_value' => $items[$delta]->get('style')->getValue(),
     ];
     // Remove style options if they aren't being loaded.
-    if (!$configuration_settings->get('use_solid_file')) {
+    if (is_bool($configuration_settings->get('use_solid_file')) && !$configuration_settings->get('use_solid_file')) {
       unset($element['settings']['style']['#options']['fas']);
     }
-    if (!$configuration_settings->get('use_regular_file')) {
+    if (is_bool($configuration_settings->get('use_regular_file')) && !$configuration_settings->get('use_regular_file')) {
       unset($element['settings']['style']['#options']['far']);
     }
-    if (!$configuration_settings->get('use_light_file')) {
+    if (is_bool($configuration_settings->get('use_light_file')) && !$configuration_settings->get('use_light_file')) {
       unset($element['settings']['style']['#options']['fal']);
     }
 
