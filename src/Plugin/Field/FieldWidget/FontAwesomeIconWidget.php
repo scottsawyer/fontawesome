@@ -190,6 +190,14 @@ class FontAwesomeIconWidget extends WidgetBase implements ContainerFactoryPlugin
       '#default_value' => isset($iconSettings['pull']) ? $iconSettings['pull'] : '',
     ];
 
+    // Allow to use CSS Classes for any purpose eg background color
+    $element['settings']['additional_classes'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Additional Classes'),
+      '#default_value' => isset($iconSettings['additional_classes']) ? $iconSettings['additional_classes'] : '',
+      '#description' => $this->t('Use space separated classes for additional manual icon tagging / settings.'),
+    ];
+
     // Allow user to edit duotone.
     $element['settings']['duotone'] = [
       '#type' => 'details',
