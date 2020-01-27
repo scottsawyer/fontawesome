@@ -6,11 +6,26 @@ use Drush\Commands\DrushCommands;
 use Symfony\Component\Filesystem\Filesystem;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Drupal\Core\Asset\LibraryDiscovery;
 
 /**
  * A Drush commandfile for Font Awesome module.
  */
 class FontawesomeCommands extends DrushCommands {
+
+  /**
+   * Library discovery service.
+   *
+   * @var Drupal\audiofield\AudioFieldPlayerManager
+   */
+  protected $LibraryDiscovery;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(LibraryDiscovery $library_discovery) {
+    $this->LibraryDiscovery = $library_discovery;
+  }
 
   /**
    * Downloads the required Fontawesome library.
@@ -30,7 +45,7 @@ class FontawesomeCommands extends DrushCommands {
       // We have dependencies on libraries module so no need to check for that
       // TODO: any way to get path for libraries directory?
       // Just in case if it is site specific? e.g. sites/domain.com/libraries ?
-      $path = drush_get_context('DRUSH_DRUPAL_ROOT') . '/libraries/fontawesome';
+      $path = DRUPAL_ROOT . '/libraries/fontawesome';
     }
 
     // Create the path if it does not exist yet. Added substr check for
@@ -44,7 +59,7 @@ class FontawesomeCommands extends DrushCommands {
     }
 
     // Load the Font Awesome defined library.
-    if ($fontawesome_library = \Drupal::service('library.discovery')->getLibraryByName('fontawesome', 'fontawesome.svg')) {
+    if ($fontawesome_library = $this->LibraryDiscovery->getLibraryByName('fontawesome', 'fontawesome.svg')) {
 
       // Download the file.
       $client = new Client();

@@ -1,5 +1,7 @@
 services:
   fontawesome.commands:
     class: \Drupal\fontawesome\Commands\FontawesomeCommands
+    arguments:
+      - '@library.discovery'
     tags:
       - { name: drush.command }
