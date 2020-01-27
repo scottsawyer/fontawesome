@@ -3,10 +3,9 @@
 namespace Drupal\fontawesome\Commands;
 
 use Drush\Commands\DrushCommands;
-use Symfony\Component\Filesystem\Filesystem;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use Drupal\Core\Asset\LibraryDiscovery;
+use Drupal\Core\File\FileSystem;
+use Drupal\Core\Archiver\ArchiverManager;
 
 /**
  * A Drush commandfile for Font Awesome module.
@@ -21,10 +20,26 @@ class FontawesomeCommands extends DrushCommands {
   protected $LibraryDiscovery;
 
   /**
+   * File system service.
+   *
+   * @var Drupal\Component\FileSystem\FileSystem
+   */
+  protected $fileSystem;
+
+  /**
+   * Archive manager service.
+   *
+   * @var Drupal\Core\Archiver\ArchiverManager
+   */
+  protected $archiverManager;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(LibraryDiscovery $library_discovery) {
+  public function __construct(LibraryDiscovery $library_discovery, FileSystem $file_system, ArchiverManager $archiver_manager) {
     $this->LibraryDiscovery = $library_discovery;
+    $this->fileSystem = $file_system;
+    $this->archiverManager = $archiver_manager;
   }
 
   /**
@@ -38,9 +53,6 @@ class FontawesomeCommands extends DrushCommands {
    */
   public function download($path = '') {
 
-    // Declare filesystem container.
-    $fs = new Filesystem();
-
     if (empty($path)) {
       // We have dependencies on libraries module so no need to check for that
       // TODO: any way to get path for libraries directory?
@@ -51,7 +63,7 @@ class FontawesomeCommands extends DrushCommands {
     // Create the path if it does not exist yet. Added substr check for
     // preventing any wrong attempts or hacks !
     if (substr($path, -11) == 'fontawesome' && !is_dir($path)) {
-      $fs->mkdir($path);
+      $this->fileSystem->mkdir($path);
     }
     if (is_dir($path . '/css')) {
       $this->logger()->notice(dt('Font Awesome already present at @path. No download required.', ['@path' => $path]));
@@ -62,24 +74,20 @@ class FontawesomeCommands extends DrushCommands {
     if ($fontawesome_library = $this->LibraryDiscovery->getLibraryByName('fontawesome', 'fontawesome.svg')) {
 
       // Download the file.
-      $client = new Client();
       $destination = tempnam(sys_get_temp_dir(), 'file.') . "tar.gz";
-      try {
-        $client->get($fontawesome_library['remote'], ['save_to' => $destination]);
-      }
-      catch (RequestException $e) {
+      system_retrieve_file($fontawesome_library['remote'], $destination);
+      if (!file_exists($destination)) {
         // Remove the directory.
-        $fs->remove($path);
-        $this->logger()->error(dt('Drush was unable to download the Font Awesome library from @remote. @exception', [
+        $this->fileSystem->rmdir($path);
+        $this->logger()->error(dt('Drush was unable to download the Font Awesome library from @remote.', [
           '@remote' => $fontawesome_library['remote'],
-          '@exception' => $e->getMessage(),
         ], 'error'));
         return;
       }
-      $fs->rename($destination, $path . '/fontawesome.zip');
+      $this->fileSystem->move($destination, $path . '/fontawesome.zip');
       if (!file_exists($path . '/fontawesome.zip')) {
         // Remove the directory where we tried to install.
-        $fs->remove($path);
+        $this->fileSystem->rmdir($path);
         $this->logger()->error(dt('Error: unable to download Fontawesome library from @remote', [
           '@remote' => $fontawesome_library['remote'],
         ], 'error'));
@@ -87,25 +95,16 @@ class FontawesomeCommands extends DrushCommands {
       }
 
       // Unzip the file.
-      $zip = new \ZipArchive();
-      $res = $zip->open($path . '/fontawesome.zip');
-      if ($res === TRUE) {
-        $zip->extractTo($path);
-        $zip->close();
-      }
-      else {
-        // Remove the directory.
-        $fs->remove($path);
-        $this->logger()->error(dt('Error: unable to unzip Fontawesome file.', [], 'error'));
-        return;
-      }
+      $zipFile = $this->archiverManager->getInstance(['filepath' => $path . '/fontawesome.zip']);
+      $zipFile->extract($path);
 
       // Remove the downloaded zip file.
-      $fs->remove($path . '/fontawesome.zip');
+      $this->fileSystem->unlink($path . '/fontawesome.zip');
 
       // Move the file.
-      $fs->mirror($path . '/fontawesome-free-' . $fontawesome_library['version'] . '-web', $path, NULL, ['override' => TRUE]);
-      $fs->remove($path . '/fontawesome-free-' . $fontawesome_library['version'] . '-web');
+      $this->fileSystem->move($path . '/fontawesome-free-' . $fontawesome_library['version'] . '-web', $this->fileSystem->getTempDirectory() . '/temp_fontawesome', FILE_EXISTS_REPLACE);
+      $this->fileSystem->rmdir($path);
+      $this->fileSystem->move($this->fileSystem->getTempDirectory() . '/temp_fontawesome', $path, FILE_EXISTS_REPLACE);
 
       // Success.
       $this->logger()->notice(dt('Fontawesome library has been successfully downloaded to @path.', [
