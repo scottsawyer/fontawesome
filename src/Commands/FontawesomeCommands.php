@@ -16,7 +16,7 @@ class FontawesomeCommands extends DrushCommands {
   /**
    * Library discovery service.
    *
-   * @var Drupal\audiofield\AudioFieldPlayerManager
+   * @var Drupal\Core\Asset\LibraryDiscovery
    */
   protected $LibraryDiscovery;
 
