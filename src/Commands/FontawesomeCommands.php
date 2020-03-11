@@ -5,6 +5,7 @@ namespace Drupal\fontawesome\Commands;
 use Drush\Commands\DrushCommands;
 use Drupal\Core\Asset\LibraryDiscovery;
 use Drupal\Core\File\FileSystem;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Archiver\ArchiverManager;
 
 /**
@@ -102,9 +103,9 @@ class FontawesomeCommands extends DrushCommands {
       $this->fileSystem->unlink($path . '/fontawesome.zip');
 
       // Move the file.
-      $this->fileSystem->move($path . '/fontawesome-free-' . $fontawesome_library['version'] . '-web', $this->fileSystem->getTempDirectory() . '/temp_fontawesome', FILE_EXISTS_REPLACE);
+      $this->fileSystem->move($path . '/fontawesome-free-' . $fontawesome_library['version'] . '-web', $this->fileSystem->getTempDirectory() . '/temp_fontawesome', FileSystemInterface::EXISTS_REPLACE);
       $this->fileSystem->rmdir($path);
-      $this->fileSystem->move($this->fileSystem->getTempDirectory() . '/temp_fontawesome', $path, FILE_EXISTS_REPLACE);
+      $this->fileSystem->move($this->fileSystem->getTempDirectory() . '/temp_fontawesome', $path, FileSystemInterface::EXISTS_REPLACE);
 
       // Success.
       $this->logger()->notice(dt('Fontawesome library has been successfully downloaded to @path.', [
