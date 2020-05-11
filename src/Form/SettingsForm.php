@@ -18,7 +18,7 @@ class SettingsForm extends ConfigFormBase {
   /**
    * Drupal LibraryDiscovery service container.
    *
-   * @var Drupal\Core\Asset\LibraryDiscovery
+   * @var \Drupal\Core\Asset\LibraryDiscovery
    */
   protected $libraryDiscovery;
 
