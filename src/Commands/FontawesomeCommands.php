@@ -38,6 +38,8 @@ class FontawesomeCommands extends DrushCommands {
    * {@inheritdoc}
    */
   public function __construct(LibraryDiscovery $library_discovery, FileSystem $file_system, ArchiverManager $archiver_manager) {
+    parent::__construct();
+
     $this->libraryDiscovery = $library_discovery;
     $this->fileSystem = $file_system;
     $this->archiverManager = $archiver_manager;
