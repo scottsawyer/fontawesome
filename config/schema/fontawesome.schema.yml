@@ -35,6 +35,9 @@ fontawesome.settings:
     use_brands_file:
       type: boolean
       label: 'Use the Font Awesome brands icons file'
+    use_duotone_file:
+      type: boolean
+      label: 'Use the Font Awesome duotone icons file'
     external_svg_integrity:
       type: string
       label: 'Integrity value of the external CDN for Font Awesome'
