@@ -115,6 +115,9 @@ class FontAwesomeIconWidget extends WidgetBase implements ContainerFactoryPlugin
     if (is_bool($configuration_settings->get('use_light_file')) && !$configuration_settings->get('use_light_file')) {
       unset($element['settings']['style']['#options']['fal']);
     }
+    if (is_bool($configuration_settings->get('use_duotone_file')) && !$configuration_settings->get('use_duotone_file')) {
+      unset($element['settings']['style']['#options']['fad']);
+    }
 
     // Allow user to determine size.
     $element['settings']['size'] = [
