@@ -5,6 +5,7 @@
  * Drupal integration with Font Awesome, the iconic font for use with Bootstrap.
  */
 
+use Drupal\Component\Discovery\YamlDiscovery;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Link;
 use Symfony\Component\Yaml\Yaml;
@@ -418,7 +419,7 @@ function fontawesome_icon_bundles() {
 }
 
 /**
- * Loads the Font Awesome metadata file.
+ * Returns the FontAwesome metadata file path.
  *
  * @return string
  *   The filepath of the metadata file.
@@ -434,6 +435,37 @@ function fontawesome_get_metadata_filepath() {
 }
 
 /**
+ * Loads the Font Awesome metadata.
+ *
+ * @return array
+ *   The available FontAwesome icon metadata.
+ */
+function fontawesome_get_metadata() {
+  // Allow modules and themes to provide their own icon metadata first. If none
+  // are provided, use the default metadata file.
+  /** @var \Drupal\Core\Extension\ThemeHandlerInterface */
+  $theme_handler = \Drupal::service('theme_handler');
+  /** @var \Drupal\Core\Extension\ModuleHandlerInterface */
+  $module_handler = \Drupal::service('module_handler');
+  /** @var \Drupal\Component\Discovery\YamlDiscovery $yaml_discovery */
+  $yaml_discovery = new YamlDiscovery('fontawesome.iconlist', $theme_handler->getThemeDirectories() + $module_handler->getModuleDirectories());
+  $data = $yaml_discovery->findAll();
+
+  $metadata = [];
+  if (!empty($data)) {
+    foreach ($data as $icons) {
+      $metadata = array_merge_recursive($metadata, $icons);
+    }
+  }
+  else {
+    $metadata = Yaml::parse(file_get_contents(fontawesome_get_metadata_filepath()));
+  }
+
+  \Drupal::service('module_handler')->alter('fontawesome_metadata', $metadata);
+  return $metadata;
+}
+
+/**
  * Provides a list of all available Font Awesome icons from metadata.
  *
  * @return array
@@ -442,10 +474,9 @@ function fontawesome_get_metadata_filepath() {
 function fontawesome_extract_icons() {
   // Check for cached icons.
   if (!$icons = \Drupal::cache('data')->get('fontawesome.iconlist')) {
-
     // Parse the metadata file and use it to generate the icon list.
     $icons = [];
-    foreach (Yaml::parse(file_get_contents(fontawesome_get_metadata_filepath())) as $name => $icon) {
+    foreach (fontawesome_get_metadata() as $name => $icon) {
       // Determine the icon type - brands behave differently.
       $type = 'solid';
       foreach ($icon['styles'] as $style) {
@@ -483,7 +514,7 @@ function fontawesome_extract_icons() {
  */
 function fontawesome_extract_icon_metadata($findIcon) {
   // Parse the metadata file and use it to generate the icon list.
-  foreach (Yaml::parse(file_get_contents(fontawesome_get_metadata_filepath())) as $name => $icon) {
+  foreach (fontawesome_get_metadata() as $name => $icon) {
     if ($name == $findIcon) {
       // Determine the icon type - brands behave differently.
       $type = 'solid';
