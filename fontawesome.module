@@ -199,6 +199,11 @@ function fontawesome_check_installed() {
   // Load the configuration settings.
   $configuration_settings = \Drupal::config('fontawesome.settings');
 
+  // If this module is not configured to load the fontawesome assets, exit.
+  if (!$configuration_settings->get('load_assets')) {
+    return TRUE;
+  }
+
   // Throw error if library file not found.
   if ($configuration_settings->get('use_cdn')) {
     return !empty($configuration_settings->get('external_svg_location'));
@@ -225,6 +230,11 @@ function fontawesome_check_installed() {
 function fontawesome_page_attachments(array &$page) {
   // Load the configuration settings.
   $configuration_settings = \Drupal::config('fontawesome.settings');
+
+  // Don't include fontawesome if the user has opted out of loading it.
+  if (!$configuration_settings->get('load_assets')) {
+    return TRUE;
+  }
 
   // Throw error if library file not found.
   if (!fontawesome_check_installed()) {

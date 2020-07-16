@@ -8,6 +8,9 @@ fontawesome.settings:
     method:
       type: string
       label: 'Method used for delivering Font Awesome'
+    load_assets:
+      type: boolean
+      label: 'Let module handle loading FontAwesome assets'
     use_cdn:
       type: boolean
       label: 'Use CDN to serve Font Awesome'
