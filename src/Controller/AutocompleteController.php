@@ -30,7 +30,7 @@ class AutocompleteController extends ControllerBase {
       // Check each icon to see if it starts with the typed string.
       foreach ($iconData as $icon => $data) {
         // If the string is found.
-        if (strpos($icon, $typed_string) === 0) {
+        if (strpos($icon, $typed_string) === 0 || in_array($typed_string, $data['search_terms'])) {
           $iconRenders = [];
           // Loop over each style.
           foreach ($iconData[$icon]['styles'] as $style) {

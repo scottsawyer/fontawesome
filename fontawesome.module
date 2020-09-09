@@ -500,6 +500,7 @@ function fontawesome_extract_icons() {
         'type' => $type,
         'label' => $icon['label'],
         'styles' => $icon['styles'],
+        'search_terms' => $icon['search']['terms'],
       ];
     }
 
