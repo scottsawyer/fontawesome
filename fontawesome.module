@@ -595,7 +595,7 @@ function fontawesome_editor_js_settings_alter(array &$settings) {
     // SVG mode requires loading javascript.
     $fontawesome_library = \Drupal::service('library.discovery')->getLibraryByName('fontawesome', 'fontawesome.svg');
     if (!$configuration_settings->get('use_cdn')) {
-      $fontawesome_library['js'][0]['data'] = '/' . $fontawesome_library['js'][0]['data'];
+      $fontawesome_library['js'][0]['data'] = base_path() . $fontawesome_library['js'][0]['data'];
     }
     $settings['editor']['fontawesome']['fontawesomeLibraries']['primary'] = $fontawesome_library['js'][0]['data'];
 
@@ -603,7 +603,7 @@ function fontawesome_editor_js_settings_alter(array &$settings) {
     if ($configuration_settings->get('use_shim')) {
       $fontawesome_library = \Drupal::service('library.discovery')->getLibraryByName('fontawesome', 'fontawesome.svg.shim');
       if (!$configuration_settings->get('use_cdn')) {
-        $fontawesome_library['js'][0]['data'] = '/' . $fontawesome_library['js'][0]['data'];
+        $fontawesome_library['js'][0]['data'] = base_path() . $fontawesome_library['js'][0]['data'];
       }
       $settings['editor']['fontawesome']['fontawesomeLibraries']['shim'] = $fontawesome_library['js'][0]['data'];
     }
