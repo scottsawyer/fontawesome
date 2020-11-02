@@ -1,0 +1,5 @@
+services:
+  fontawesome_iconpicker_widget.icon_manager:
+    class: Drupal\fontawesome_iconpicker_widget\IconManagerService
+    arguments: ['@module_handler', '@theme_handler']
+ 
